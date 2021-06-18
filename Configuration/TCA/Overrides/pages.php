@@ -1,13 +1,15 @@
 <?php
 defined('TYPO3_MODE') or die();
 
+$langFile = 'LLL:EXT:examples/Resources/Private/Language/locallang_db.xlf';
+
 // Add a "related pages" field to demonstrate select-type fields with tree rendering
 // USAGE: TCA Reference > $TCA array reference > ['columns'][field name]['config'] / TYPE: "select"
 // https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Select/Index.html#columns-select
 $temporaryColumn = [
     'tx_examples_related_pages' => [
         'exclude' => 0,
-        'label' => 'LLL:EXT:examples/Resources/Private/Language/locallang_db.xlf:pages.tx_examples_related_pages',
+        'label' => $langFile . ':pages.tx_examples_related_pages',
         'config' => [
             'type' => 'select',
             'renderType' => 'selectTree',
@@ -27,6 +29,18 @@ $temporaryColumn = [
             ],
         ],
     ],
+    'tx_examples_import_data_control' => [
+        'label'   => $langFile . ':pages.tx_examples_import_data_control',
+        'config'  => [
+            'type' => 'input',
+            'eval' => 'int, unique',
+            'fieldControl' => [
+                'importControl' => [
+                    'renderType' => 'importDataControl'
+                ]
+            ]
+        ]
+    ],
 ];
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('pages', $temporaryColumn);
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette(
@@ -34,6 +48,11 @@ $temporaryColumn = [
     'media',
     '--linebreak--,tx_examples_related_pages',
     'after:media'
+);
+
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
+    'pages',
+    'tx_examples_import_data_control'
 );
 
 // Add an extra categories selection field to the pages table
